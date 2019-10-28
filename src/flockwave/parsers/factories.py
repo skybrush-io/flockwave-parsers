@@ -1,5 +1,5 @@
 """Base class and interface specification for message parsers in the
-Flockwave server.
+Flockwave application suite.
 """
 
 from typing import Callable, Optional
@@ -8,7 +8,12 @@ from .filters import reject_shorter_than
 from .splitters import dummy_splitter, split_lines, split_using_length_prefix
 from .types import Filter, Parser, ParserCoroutine, Splitter, T
 
-__all__ = ("create_line_parser", "create_parser_coroutine")
+__all__ = (
+    "create_length_prefixed_parser",
+    "create_line_parser",
+    "create_parser",
+    "create_parser_coroutine",
+)
 
 
 def create_parser_coroutine(

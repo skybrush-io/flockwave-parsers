@@ -86,6 +86,11 @@ def _propose_header_length(max_length: Optional[int]) -> int:
         )
 
 
+def _validate_endianness(endianness: str) -> bool:
+    if endianness not in ("big", "little"):
+        raise ValueError(f"unknown endianness: {endianness}")
+
+
 def _get_body_length_from_header(header: bytes, endianness: str) -> int:
     """Given a fully retrieved packet header, returns how many bytes we
     should read to retrieve the full body packet.
@@ -110,8 +115,7 @@ def split_using_length_prefix(
     header_length: Optional[int] = None,
     endianness: str = "big",
 ):
-    if endianness not in ("big", "little"):
-        raise ValueError(f"unknown endianness: {endianness}")
+    _validate_endianness(endianness)
 
     header_length = header_length or _propose_header_length(max_length)
     get_body_length = partial(_get_body_length_from_header, endianness=endianness)
