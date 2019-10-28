@@ -1,4 +1,4 @@
-"""JSON-RPC protocol parser."""
+"""RPC protocol parser."""
 
 try:
     from tinyrpc import InvalidRequestError
