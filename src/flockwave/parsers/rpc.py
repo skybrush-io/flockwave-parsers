@@ -44,7 +44,7 @@ def create_rpc_parser(*, protocol: RPCProtocol, **kwds) -> Parser[RPCMessage]:
             RPC messages.
     """
     if "splitter" in kwds:
-        splitter = kwds["splitter"]
+        splitter = kwds.pop("splitter")
     else:
         splitter = split_using_length_prefix(header_length=2)
 

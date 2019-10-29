@@ -5,6 +5,7 @@ from json import JSONDecoder
 from typing import Any, Optional
 
 from .factories import create_parser
+from .filters import reject_shorter_than
 from .splitters import split_lines
 from .types import Parser
 
@@ -38,12 +39,13 @@ def create_json_parser(
         decoder = JSONDecoder()
 
     if "splitter" in kwds:
-        splitter = kwds["splitter"]
+        splitter = kwds.pop("splitter")
     else:
         splitter = split_lines()
 
     return create_parser(
         splitter=splitter,
         decoder=partial(_decode_json_message, decoder, encoding),
+        pre_filter=reject_shorter_than(1),
         **kwds
     )
