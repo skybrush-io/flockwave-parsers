@@ -7,11 +7,11 @@ except ImportError:
     raise ImportError("install 'tinyrpc' to use RPC-related parsers")
 
 from functools import partial
-from typing import Optional, Union
+from typing import Union
 
 from .factories import create_parser
 from .splitters import split_using_length_prefix
-from .types import Parser, Splitter
+from .types import Parser
 
 
 RPCMessage = Union[RPCRequest, RPCResponse]
@@ -27,9 +27,7 @@ def _parse_rpc_message(protocol: RPCProtocol, data: bytes) -> RPCMessage:
             raise ex
 
 
-def create_rpc_parser(
-    *, protocol: RPCProtocol, splitter: Optional[Splitter] = None, **kwds
-) -> Parser[RPCMessage]:
+def create_rpc_parser(*, protocol: RPCProtocol, **kwds) -> Parser[RPCMessage]:
     """Creates a parser that parses incoming bytes as RPC requests and responses
     according to some RPC protocol.
 
@@ -45,7 +43,9 @@ def create_rpc_parser(
         splitter: the splitter to use to determine the boundaries between
             RPC messages.
     """
-    if splitter is None:
+    if "splitter" in kwds:
+        splitter = kwds["splitter"]
+    else:
         splitter = split_using_length_prefix(header_length=2)
 
     decoder = partial(_parse_rpc_message, protocol)
