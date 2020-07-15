@@ -1,0 +1,35 @@
+[tool.poetry]
+name = "flockwave-parsers"
+version = "1.2.0"
+description = "Parser objects for various message formats"
+authors = ["Tamas Nepusz <tamas@collmot.com>"]
+packages = [
+    { include = "flockwave", from = "src" }
+]
+
+[tool.poetry.dependencies]
+python = "^3.7"
+
+[tool.poetry.dev-dependencies]
+pytest = "^5.4.3"
+tinyrpc = "^1.0.4"
+coverage = {extras = ["toml"], version = "^5.2"}
+pytest-cov = "^2.10.0"
+
+[[tool.poetry.source]]
+name = "collmot"
+url = "https://pypi.collmot.com/simple/"
+
+[tool.coverage.paths]
+source = ["src"]
+
+[tool.coverage.run]
+branch = true
+source = ["src"]
+
+[tool.coverage.report]
+show_missing = true
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
