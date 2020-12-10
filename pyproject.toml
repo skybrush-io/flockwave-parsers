@@ -9,12 +9,15 @@ packages = [
 
 [tool.poetry.dependencies]
 python = "^3.7"
+tinyrpc = {version = "^1.0.4", optional = true}
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.4.3"
-tinyrpc = "^1.0.4"
 coverage = {extras = ["toml"], version = "^5.2"}
 pytest-cov = "^2.10.0"
+
+[tool.poetry.extras]
+rpc = ["tinyrpc"]
 
 [[tool.poetry.source]]
 name = "collmot"
