@@ -6,32 +6,32 @@ from typing import Callable, Optional
 
 from .filters import reject_shorter_than
 from .splitters import dummy_splitter, split_lines, split_using_length_prefix
-from .types import Filter, Parser, ParserCoroutine, Splitter, T
+from .types import Filter, Parser, ParserGenerator, Splitter, T
 
 __all__ = (
     "create_length_prefixed_parser",
     "create_line_parser",
     "create_parser",
-    "create_parser_coroutine",
+    "create_parser_generator",
 )
 
 
-def create_parser_coroutine(
+def create_parser_generator(
     *,
     splitter: Optional[Splitter] = None,
     decoder: Optional[Callable[[bytes], T]] = None,
     pre_filter: Optional[Filter[bytes]] = None,
     post_filter: Optional[Filter[T]] = None,
     filter: Optional[Filter[T]] = None,
-) -> ParserCoroutine[T]:
-    """Creates a parser coroutine from a splitter and a decoder function
+) -> ParserGenerator[T]:
+    """Creates a parser generator from a splitter and a decoder function
     and several optional filters.
 
     Keyword arguments:
-        splitter: coroutine that will receive each chunk that is fed into
+        splitter: generator that will receive each chunk that is fed into
             the parser, and that must yield raw bytes of the individual
             packets detected in the input stream. Defaults to the identity
-            coroutine that simply yields whatever was sent to it.
+            generator that simply yields whatever was sent to it.
         decoder: optional function to call on the raw bytes of each detected
             incoming message before it is given to the callback as
             the first argument. The return value of the function will be
@@ -56,12 +56,14 @@ def create_parser_coroutine(
         splitter = dummy_splitter()
 
     # Syntactic sugar: allow the user to pass in a function that returns
-    # a coroutine when called with no arguments
+    # a generator when called with no arguments
     if callable(splitter):
         splitter = splitter()
 
-    next(splitter)  # prime the coroutine
-    data = yield
+    assert splitter is not None
+
+    next(splitter)  # prime the generator
+    data = yield ()
 
     while True:
         messages = []
@@ -80,27 +82,29 @@ def create_parser_coroutine(
         data = yield messages
 
 
-def create_parser(coro: Optional[ParserCoroutine[T]] = None, **kwds) -> Parser[T]:
-    """Creates a parser from a parser coroutine.
+def create_parser(gen: Optional[ParserGenerator[T]] = None, **kwds) -> Parser[T]:
+    """Creates a parser from a parser generator.
 
-    You can either supply a parser coroutine directly as the first positional
+    You can either supply a parser generator directly as the first positional
     argument, or you can supply a set of keyword arguments that are passed
-    directly to `create_parser_coroutine()`; in the latter case, the result
-    of the `create_parser_coroutine()` call will be converted into a parser
+    directly to `create_parser_generator()`; in the latter case, the result
+    of the `create_parser_generator()` call will be converted into a parser
     function.
 
-    See the docstring of `create_parser_coroutine()` for the list of allowed
+    See the docstring of `create_parser_generator()` for the list of allowed
     keyword arguments.
     """
-    if coro is None:
-        coro = create_parser_coroutine(**kwds)
+    if gen is None:
+        gen = create_parser_generator(**kwds)  # type: ignore
     elif kwds:
         raise ValueError(
-            "no keyword arguments should be specified if you supply a coroutine directly"
+            "no keyword arguments should be specified if you supply a generator directly"
         )
 
-    next(coro)
-    return coro.send
+    assert gen is not None
+
+    next(gen)
+    return gen.send
 
 
 def create_length_prefixed_parser(

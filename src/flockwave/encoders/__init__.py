@@ -6,7 +6,7 @@ from .factories import (
     create_length_prefixed_encoder,
     create_line_encoder,
 )
-from .types import Encoder, Merger
+from .types import Encoder, Wrapper
 
 __all__ = (
     "create_encoder",
@@ -14,5 +14,5 @@ __all__ = (
     "create_line_encoder",
     "EncodingError",
     "Encoder",
-    "Merger",
+    "Wrapper",
 )

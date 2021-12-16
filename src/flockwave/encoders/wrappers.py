@@ -1,33 +1,36 @@
-"""Merger factory functions to be used as building blocks for encoders."""
+"""Wrapper factory functions to be used as building blocks for encoders."""
 
-__all__ = ("merge_with_newlines", "merge_using_length_prefix")
+__all__ = ("append_separator", "prefix_with_length")
 
+from functools import lru_cache
 from struct import Struct
 from typing import Optional
 
 from ..parsers.splitters import _propose_header_length, _validate_endianness
 
 from .errors import EncodingError
-from .types import Merger
+from .types import Wrapper
 
 
-def _merge_with_newlines(data: bytes) -> bytes:
-    return data + b"\n"
+@lru_cache(maxsize=None)
+def append_separator(separator: bytes) -> Wrapper:
+    def wrapper(data: bytes) -> bytes:
+        return data + separator
+
+    return wrapper
 
 
-def merge_with_newlines() -> Merger:
-    return _merge_with_newlines
-
-
-def merge_using_length_prefix(
+def prefix_with_length(
     *,
     max_length: Optional[int] = None,
     header_length: Optional[int] = None,
     endianness: str = "big",
-) -> Merger:
+) -> Wrapper:
     header_length = header_length or _propose_header_length(max_length)
     if max_length is None:
         max_length = (2 ** (8 * header_length)) - 1
+
+    assert max_length is not None
 
     _validate_endianness(endianness)
 
@@ -40,7 +43,7 @@ def merge_using_length_prefix(
     else:
         length_struct = None
 
-    def merger(data: bytes) -> bytes:
+    def wrapper(data: bytes) -> bytes:
         length = len(data)
         if length > max_length:
             raise EncodingError(
@@ -60,4 +63,4 @@ def merge_using_length_prefix(
                 header.reverse()
             return bytes(header) + data
 
-    return merger
+    return wrapper

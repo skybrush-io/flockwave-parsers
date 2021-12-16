@@ -1,4 +1,4 @@
-"""Splitter coroutines to be used as building blocks for parsers."""
+"""Splitter generators to be used as building blocks for parsers."""
 
 from functools import partial
 from math import ceil, log
@@ -13,15 +13,16 @@ def dummy_splitter() -> Splitter:
     chunk is a message on its own).
 
     Returns:
-        a coroutine that can be used with `create_parser()`
+        a generator that can be used with `create_parser()`
     """
+    chunk = []
     while True:
-        data = yield
-        return [data]
+        data = yield chunk
+        chunk = [data]
 
 
 def split_around_delimiters(delimiters: bytes) -> Splitter:
-    """Coroutine function that takes a set of delimiters, and returns a coroutine
+    """Generator function that takes a set of delimiters, and returns a generator
     that splits incoming messages around the given delimiters, assuming that no
     message contains any of the delimiter characters.
 
@@ -31,7 +32,7 @@ def split_around_delimiters(delimiters: bytes) -> Splitter:
             messages
 
     Returns:
-        a coroutine that can be used with `create_parser()`
+        a generator that can be used with `create_parser()`
     """
     separator = bytes([delimiters[0]])
     trans = bytes.maketrans(delimiters, separator * len(delimiters))
@@ -39,7 +40,7 @@ def split_around_delimiters(delimiters: bytes) -> Splitter:
     chunks = []
     batch = []
 
-    data = yield
+    data = yield ()
     data = data.translate(trans)
 
     while True:
@@ -58,11 +59,11 @@ def split_around_delimiters(delimiters: bytes) -> Splitter:
 
 
 def split_lines() -> Splitter:
-    """Coroutine function that returns a coroutine that splits incoming
+    """Generator function that returns a generator that splits incoming
     messages around newline characters (``\r`` and ``\n``).
 
     Returns:
-        a coroutine that can be used with `create_parser()`
+        a generator that can be used with `create_parser()`
     """
     yield from split_around_delimiters(b"\r\n")
 
@@ -86,7 +87,7 @@ def _propose_header_length(max_length: Optional[int]) -> int:
         )
 
 
-def _validate_endianness(endianness: str) -> bool:
+def _validate_endianness(endianness: str) -> None:
     if endianness not in ("big", "little"):
         raise ValueError(f"unknown endianness: {endianness}")
 

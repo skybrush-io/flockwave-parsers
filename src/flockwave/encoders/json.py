@@ -7,8 +7,8 @@ from json import JSONEncoder
 from typing import Any, Optional
 
 from .factories import create_encoder
-from .mergers import merge_with_newlines
-from .types import Encoder, Merger
+from .types import Encoder, Wrapper
+from .wrappers import append_separator
 
 
 def _encode_json_message(encoder: JSONEncoder, encoding: str, message: Any) -> bytes:
@@ -33,7 +33,7 @@ def _encode_object_to_json(obj: Any) -> Any:
 def create_json_encoder(
     encoder: Optional[JSONEncoder] = None,
     *,
-    merger: Optional[Merger] = None,
+    wrapper: Optional[Wrapper] = None,
     encoding: str = "utf-8",
     **kwds
 ) -> Encoder[Any]:
@@ -42,7 +42,7 @@ def create_json_encoder(
 
     By default, this encoder assumes that individual messages should be separated
     by newlines and that no message contains a newline character in its encoded
-    form. If this is not suitable for you, you may specify an alternative merger
+    form. If this is not suitable for you, you may specify an alternative wrapper
     in the keyword arguments.
 
     All keyword arguments not explicitly mentioned here are forwarded to
@@ -54,7 +54,7 @@ def create_json_encoder(
             newline characters are used in any of the encoded messages.
 
     Keyword arguments:
-        merger: the merger to use to augment the encoded messages to help the
+        wrapper: the wrapper to use to augment the encoded messages to help the
             parser separate the individual messages
     """
     if encoder is None:
@@ -65,9 +65,9 @@ def create_json_encoder(
             default=_encode_object_to_json,
         )
 
-    if merger is None:
-        merger = merge_with_newlines()
+    if wrapper is None:
+        wrapper = append_separator(b"\n")
 
     return create_encoder(
-        merger=merger, encoder=partial(_encode_json_message, encoder, encoding), **kwds
+        wrapper=wrapper, encoder=partial(_encode_json_message, encoder, encoding), **kwds
     )

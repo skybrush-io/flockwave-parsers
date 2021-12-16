@@ -1,7 +1,7 @@
-from typing import Callable, Coroutine, Iterable, TypeVar
+from typing import Callable, Generator, Iterable, TypeVar
 
 
-__all__ = ("Parser", "ParserCoroutine", "Splitter", "T")
+__all__ = ("Parser", "ParserGenerator", "Splitter", "T")
 
 T = TypeVar("T")
 
@@ -20,8 +20,8 @@ Raises:
     ParseError: in case of unrecoverable parse errors
 """
 
-ParserCoroutine = Coroutine[Iterable[T], bytes, None]
-"""Type specification for message parser coroutines that can be fed with
+ParserGenerator = Generator[Iterable[T], bytes, None]
+"""Type specification for message parser generators that can be fed with
 incoming data and that yield the parsed messages.
 
 Accepts:
@@ -35,8 +35,8 @@ Raises:
     ParseError: in case of unrecoverable parse errors
 """
 
-Splitter = ParserCoroutine[bytes]
-"""Type specification for message splitter coroutines that can be fed with
+Splitter = ParserGenerator[bytes]
+"""Type specification for message splitter generators that can be fed with
 incoming data and that yield the individual, raw (not parsed) messages.
 
 Accepts:

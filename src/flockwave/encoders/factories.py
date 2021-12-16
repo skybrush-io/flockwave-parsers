@@ -4,8 +4,8 @@ Flockwave application suite.
 
 from typing import Optional
 
-from .mergers import merge_with_newlines, merge_using_length_prefix
-from .types import Encoder, Merger, T
+from .wrappers import append_separator, prefix_with_length
+from .types import Encoder, Wrapper, T
 
 __all__ = ("create_encoder", "create_length_prefixed_encoder", "create_line_encoder")
 
@@ -15,12 +15,12 @@ def _identity(x: bytes) -> bytes:
 
 
 def create_encoder(
-    encoder: Encoder[T] = None, merger: Optional[Merger] = None
+    encoder: Optional[Encoder[T]] = None, wrapper: Optional[Wrapper] = None
 ) -> Encoder[T]:
-    """Creates an encoder function from an encoder and a merger function.
+    """Creates an encoder function from an encoder and a wrapper function.
 
     The encoder function is responsible for turning a single message into its
-    byte-level representation on the network. The merger function wraps the
+    byte-level representation on the network. The wrapper function wraps the
     encoded messages in a way that makes it possible to separate the individual
     messages later on the receiving end unambiguously.
 
@@ -28,13 +28,13 @@ def create_encoder(
         encoder: function that will receive each individual message to encode
             and must receive its byte-level representation. Defaults to the
             identity function.
-        merger: function that wraps the encoded messages in a way that makes it
+        wrapper: function that wraps the encoded messages in a way that makes it
             possible to separate the individual messages later on the receiving
             end unambiguously
     """
     encoder = encoder or _identity
-    if merger:
-        return lambda message: merger(encoder(message))
+    if wrapper:
+        return lambda message: wrapper(encoder(message))  # type: ignore
     else:
         return encoder
 
@@ -66,7 +66,7 @@ def create_length_prefixed_encoder(
             number of bytes allocated to convey the length of the message
     """
     return create_encoder(
-        merger=merge_using_length_prefix(
+        wrapper=prefix_with_length(
             max_length=max_length, header_length=header_length, endianness=endianness
         ),
         **kwds,
@@ -84,4 +84,4 @@ def create_line_encoder(**kwds) -> Encoder[T]:
     All keyword arguments not mentioned here are forwarded to
     ``create_encoder()``.
     """
-    return create_encoder(merger=merge_with_newlines(), **kwds)
+    return create_encoder(wrapper=append_separator(b"\n"), **kwds)

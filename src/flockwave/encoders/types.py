@@ -1,7 +1,7 @@
 from typing import Callable, TypeVar
 
 
-__all__ = ("Encoder", "Merger", "T")
+__all__ = ("Encoder", "Wrapper", "T")
 
 T = TypeVar("T")
 
@@ -20,14 +20,14 @@ Raises:
     EncodingError: in case of unrecoverable encoding errors
 """
 
-Merger = Callable[[bytes], bytes]
-"""Type specification for message merger functions that take a serialized
+Wrapper = Callable[[bytes], bytes]
+"""Type specification for message wrapper functions that take a serialized
 version of a message and wraps it with the appropriate separator or header
 bytes that ensure that individual messages can be separated on the wire
 when they are parsed again.
 
 Accepts:
-    the raw bytes to feed into the merger
+    the raw bytes to feed into the wrapper
 
 Returns:
     the raw bytes, prefixed or suffixed with the appropriate extra delimiter
