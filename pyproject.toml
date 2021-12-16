@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "flockwave-parsers"
-version = "1.2.0"
+version = "2.0.0"
 description = "Parser objects for various message formats"
 authors = ["Tamas Nepusz <tamas@collmot.com>"]
 packages = [
