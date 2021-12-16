@@ -69,5 +69,7 @@ def create_json_encoder(
         wrapper = append_separator(b"\n")
 
     return create_encoder(
-        wrapper=wrapper, encoder=partial(_encode_json_message, encoder, encoding), **kwds
+        wrapper=wrapper,
+        encoder=partial(_encode_json_message, encoder, encoding),
+        **kwds
     )
