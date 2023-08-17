@@ -15,12 +15,12 @@ priority = "primary"
 [[tool.poetry.source]]
 name = "collmot"
 url = "https://pypi.collmot.com/simple/"
-secondary = true
+priority = "explicit"
 
 [[tool.poetry.source]]
 name = "fury"
 url = "https://pypi.fury.io/skybrush/"
-secondary = true
+priority = "supplemental"
 
 [tool.poetry.dependencies]
 python = "^3.7"
