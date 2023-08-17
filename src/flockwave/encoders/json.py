@@ -27,7 +27,7 @@ def _encode_object_to_json(obj: Any) -> Any:
         try:
             return obj.json
         except AttributeError:
-            raise TypeError("cannot encode {0!r} into JSON".format(obj))
+            raise TypeError(f"cannot encode {obj!r} into JSON") from None
 
 
 def create_json_encoder(
@@ -35,7 +35,7 @@ def create_json_encoder(
     *,
     wrapper: Optional[Wrapper] = None,
     encoding: str = "utf-8",
-    **kwds
+    **kwds,
 ) -> Encoder[Any]:
     """Creates an encoder that encodes outgoing RPC messages according to some
     RPC protocol.
@@ -71,5 +71,5 @@ def create_json_encoder(
     return create_encoder(
         wrapper=wrapper,
         encoder=partial(_encode_json_message, encoder, encoding),
-        **kwds
+        **kwds,
     )

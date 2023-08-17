@@ -4,7 +4,7 @@ try:
     from tinyrpc import InvalidRequestError
     from tinyrpc.protocols import RPCProtocol, RPCRequest, RPCResponse
 except ImportError:
-    raise ImportError("install 'tinyrpc' to use RPC-related parsers")
+    raise ImportError("install 'tinyrpc' to use RPC-related parsers") from None
 
 from functools import partial
 from typing import Union
@@ -24,7 +24,7 @@ def _parse_rpc_message(protocol: RPCProtocol, data: bytes) -> RPCMessage:
         try:
             return protocol.parse_reply(data)
         except Exception:
-            raise ex
+            raise ex from None
 
 
 def create_rpc_parser(*, protocol: RPCProtocol, **kwds) -> Parser[RPCMessage]:

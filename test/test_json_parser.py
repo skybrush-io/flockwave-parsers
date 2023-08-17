@@ -8,7 +8,7 @@ import pytest
     [
         ([b""], []),
         ([b"[123", b', false, "fo', b'obar"]\n'], [[123, False, "foobar"]]),
-        ([b"", b'{"a":', b' "q"}', b"\n"], [dict(a="q")]),
+        ([b"", b'{"a":', b' "q"}', b"\n"], [{"a": "q"}]),
         ([b"[123]\n\n\n", b"\n\n"], [[123]]),
     ],
 )

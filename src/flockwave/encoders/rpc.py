@@ -9,7 +9,7 @@ from typing import Optional, Union
 try:
     from tinyrpc.protocols import RPCProtocol, RPCRequest, RPCResponse
 except ImportError:
-    raise ImportError("install 'tinyrpc' to use RPC-related encoders")
+    raise ImportError("install 'tinyrpc' to use RPC-related encoders") from None
 
 
 RPCMessage = Union[RPCRequest, RPCResponse]
