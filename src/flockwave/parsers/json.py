@@ -47,5 +47,5 @@ def create_json_parser(
         splitter=splitter,
         decoder=partial(_decode_json_message, decoder, encoding),
         pre_filter=reject_shorter_than(1),
-        **kwds
+        **kwds,
     )
