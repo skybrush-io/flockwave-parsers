@@ -1,6 +1,6 @@
 [project]
 name = "flockwave-parsers"
-version = "2.1.0"
+version = "3.0.0"
 description = "Parser objects for various message formats"
 authors = [{ name = "Tamas Nepusz", email = "tamas@collmot.com" }]
 license = "MIT"
