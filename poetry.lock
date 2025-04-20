@@ -261,5 +261,5 @@ rpc = ["tinyrpc"]
 
 [metadata]
 lock-version = "2.1"
-python-versions = ">=3.10,<4.0"
-content-hash = "e53a4a68efde6f60c2f38540916330347e4aeace26702b306287d02caf0785c7"
+python-versions = ">=3.10"
+content-hash = "455b813487a2d4272292a993ccf77194aadff8451712e86284efe05712cae641"

@@ -4,7 +4,7 @@ version = "3.0.0"
 description = "Parser objects for various message formats"
 authors = [{ name = "Tamas Nepusz", email = "tamas@collmot.com" }]
 license = "MIT"
-requires-python = ">=3.10,<4.0"
+requires-python = ">=3.10"
 
 [project.optional-dependencies]
 rpc = [
