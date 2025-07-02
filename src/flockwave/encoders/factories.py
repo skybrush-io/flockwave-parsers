@@ -2,8 +2,6 @@
 Flockwave application suite.
 """
 
-from typing import Optional
-
 from .wrappers import append_separator, prefix_with_length
 from .types import Encoder, Wrapper, T
 
@@ -15,7 +13,7 @@ def _identity(x: bytes) -> bytes:
 
 
 def create_encoder(
-    encoder: Optional[Encoder[T]] = None, wrapper: Optional[Wrapper] = None
+    encoder: Encoder[T] | None = None, wrapper: Wrapper | None = None
 ) -> Encoder[T]:
     """Creates an encoder function from an encoder and a wrapper function.
 
@@ -41,8 +39,8 @@ def create_encoder(
 
 def create_length_prefixed_encoder(
     *,
-    max_length: Optional[int] = None,
-    header_length: Optional[int] = None,
+    max_length: int | None = None,
+    header_length: int | None = None,
     endianness: str = "big",
     **kwds,
 ) -> Encoder[T]:

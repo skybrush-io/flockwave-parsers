@@ -2,7 +2,6 @@
 
 from functools import partial
 from math import ceil, log
-from typing import Optional
 
 from .errors import ParseError
 from .types import Splitter
@@ -68,7 +67,7 @@ def split_lines() -> Splitter:
     yield from split_around_delimiters(b"\r\n")
 
 
-def _propose_header_length(max_length: Optional[int]) -> int:
+def _propose_header_length(max_length: int | None) -> int:
     """Proposes how many bytes the parser should need to represent the
     length of the packets when using a length-prefixed splitter.
 
@@ -112,8 +111,8 @@ def _get_body_length_from_header(header: bytes, endianness: str) -> int:
 
 
 def split_using_length_prefix(
-    max_length: Optional[int] = None,
-    header_length: Optional[int] = None,
+    max_length: int | None = None,
+    header_length: int | None = None,
     endianness: str = "big",
 ):
     _validate_endianness(endianness)

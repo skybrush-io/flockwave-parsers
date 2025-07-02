@@ -4,7 +4,6 @@ __all__ = ("append_separator", "prefix_with_length")
 
 from functools import lru_cache
 from struct import Struct
-from typing import Optional
 
 from ..parsers.splitters import _propose_header_length, _validate_endianness
 
@@ -22,8 +21,8 @@ def append_separator(separator: bytes) -> Wrapper:
 
 def prefix_with_length(
     *,
-    max_length: Optional[int] = None,
-    header_length: Optional[int] = None,
+    max_length: int | None = None,
+    header_length: int | None = None,
     endianness: str = "big",
 ) -> Wrapper:
     header_length = header_length or _propose_header_length(max_length)

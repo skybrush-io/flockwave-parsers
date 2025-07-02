@@ -2,7 +2,7 @@
 Flockwave application suite.
 """
 
-from typing import Callable, Optional
+from typing import Callable
 
 from .filters import reject_shorter_than
 from .splitters import dummy_splitter, split_lines, split_using_length_prefix
@@ -18,11 +18,11 @@ __all__ = (
 
 def create_parser_generator(
     *,
-    splitter: Optional[Splitter] = None,
-    decoder: Optional[Callable[[bytes], T]] = None,
-    pre_filter: Optional[Filter[bytes]] = None,
-    post_filter: Optional[Filter[T]] = None,
-    filter: Optional[Filter[T]] = None,
+    splitter: Splitter | None = None,
+    decoder: Callable[[bytes], T] | None = None,
+    pre_filter: Filter[bytes] | None = None,
+    post_filter: Filter[T] | None = None,
+    filter: Filter[T] | None = None,
 ) -> ParserGenerator[T]:
     """Creates a parser generator from a splitter and a decoder function
     and several optional filters.
@@ -82,7 +82,7 @@ def create_parser_generator(
         data = yield messages
 
 
-def create_parser(gen: Optional[ParserGenerator[T]] = None, **kwds) -> Parser[T]:
+def create_parser(gen: ParserGenerator[T] | None = None, **kwds) -> Parser[T]:
     """Creates a parser from a parser generator.
 
     You can either supply a parser generator directly as the first positional
@@ -109,9 +109,9 @@ def create_parser(gen: Optional[ParserGenerator[T]] = None, **kwds) -> Parser[T]
 
 def create_length_prefixed_parser(
     *,
-    min_length: Optional[int] = None,
-    max_length: Optional[int] = None,
-    header_length: Optional[int] = None,
+    min_length: int | None = None,
+    max_length: int | None = None,
+    header_length: int | None = None,
     endianness: str = "big",
     **kwds,
 ) -> Parser[T]:
@@ -142,7 +142,7 @@ def create_length_prefixed_parser(
     )
 
 
-def create_line_parser(*, min_length: Optional[int] = None, **kwds) -> Parser[T]:
+def create_line_parser(*, min_length: int | None = None, **kwds) -> Parser[T]:
     """Creates a parser that assumes that incoming messages are separated by
     newline characters.
 

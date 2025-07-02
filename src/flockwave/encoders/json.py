@@ -4,7 +4,7 @@ from datetime import datetime
 from enum import Enum
 from functools import partial
 from json import JSONEncoder
-from typing import Any, Optional
+from typing import Any
 
 from .factories import create_encoder
 from .types import Encoder, Wrapper
@@ -31,9 +31,9 @@ def _encode_object_to_json(obj: Any) -> Any:
 
 
 def create_json_encoder(
-    encoder: Optional[JSONEncoder] = None,
+    encoder: JSONEncoder | None = None,
     *,
-    wrapper: Optional[Wrapper] = None,
+    wrapper: Wrapper | None = None,
     encoding: str = "utf-8",
     **kwds,
 ) -> Encoder[Any]:

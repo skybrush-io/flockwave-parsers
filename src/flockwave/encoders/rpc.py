@@ -4,7 +4,7 @@ from .factories import create_encoder
 from .wrappers import prefix_with_length
 from .types import Encoder, Wrapper
 
-from typing import Optional, Union
+from typing import Union
 
 try:
     from tinyrpc.protocols import RPCProtocol, RPCRequest, RPCResponse
@@ -20,7 +20,7 @@ def _encode_rpc_message(message: RPCMessage) -> bytes:
 
 
 def create_rpc_encoder(
-    *, protocol: RPCProtocol, wrapper: Optional[Wrapper] = None, **kwds
+    *, protocol: RPCProtocol, wrapper: Wrapper | None = None, **kwds
 ) -> Encoder[RPCMessage]:
     """Creates an encoder that encodes outgoing RPC messages according to some
     RPC protocol.

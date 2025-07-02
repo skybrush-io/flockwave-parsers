@@ -2,7 +2,7 @@
 
 from functools import partial
 from json import JSONDecoder
-from typing import Any, Optional
+from typing import Any
 
 from .factories import create_parser
 from .filters import reject_shorter_than
@@ -15,7 +15,7 @@ def _decode_json_message(decoder: JSONDecoder, encoding: str, data: bytes) -> An
 
 
 def create_json_parser(
-    decoder: Optional[JSONDecoder] = None, *, encoding: str = "utf-8", **kwds
+    decoder: JSONDecoder | None = None, *, encoding: str = "utf-8", **kwds
 ) -> Parser[Any]:
     """Creates a parser that parses incoming bytes as JSON objects.
 
