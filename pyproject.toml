@@ -34,6 +34,7 @@ priority = "supplemental"
 pytest = "^8.1.1"
 coverage = {extras = ["toml"], version = "^7.1"}
 pytest-cov = "^6.1.1"
+orjson = "^3.10.18"
 
 [tool.coverage.paths]
 source = ["src"]
