@@ -56,10 +56,10 @@ def _adapt_builtin_encoder(encoder: JSONEncoder) -> Encoder[Any]:
 def _adapt_orjson_encoder(
     option: int | None = None,
 ) -> Encoder[Any]:
-    from orjson import dumps, OPT_SORT_KEYS
+    from orjson import dumps, OPT_PASSTHROUGH_DATACLASS, OPT_SORT_KEYS
 
     if option is None:
-        option = OPT_SORT_KEYS
+        option = OPT_PASSTHROUGH_DATACLASS | OPT_SORT_KEYS
     return partial(dumps, default=object_to_jsonable, option=option)
 
 

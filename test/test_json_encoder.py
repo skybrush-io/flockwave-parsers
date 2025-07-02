@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from json import JSONEncoder
 from flockwave.encoders.json import create_json_encoder, object_to_jsonable
 
@@ -11,12 +12,20 @@ class CustomObject:
         return ["lovely spam!"]
 
 
+@dataclass
+class CustomDataclass:
+    @property
+    def json(self):
+        return ["wonderful spam!"]
+
+
 @pytest.mark.parametrize(
     ("message", "expected"),
     [
         ([123, "spam", {"a": 42}], b'[123,"spam",{"a":42}]\n'),
         (datetime.datetime(year=2004, month=4, day=17), b'"2004-04-17T00:00:00"\n'),
         (CustomObject(), b'["lovely spam!"]\n'),
+        (CustomDataclass(), b'["wonderful spam!"]\n'),
         (["list\nwith\nnewlines"], b'["list\\nwith\\nnewlines"]\n'),
     ],
 )
@@ -35,6 +44,7 @@ def test_json_encoding_orjson(message, expected):
         ([123, "spam", {"a": 42}], b'[123,"spam",{"a":42}]\n'),
         (datetime.datetime(year=2004, month=4, day=17), b'"2004-04-17T00:00:00"\n'),
         (CustomObject(), b'["lovely spam!"]\n'),
+        (CustomDataclass(), b'["wonderful spam!"]\n'),
         (["list\nwith\nnewlines"], b'["list\\nwith\\nnewlines"]\n'),
     ],
 )
@@ -51,6 +61,7 @@ def test_json_encoding_builtin(message, expected):
         ([123, "spam", {"a": 42}], b'[\n  123,\n  "spam",\n  {\n    "a": 42\n  }\n]\n'),
         (datetime.datetime(year=2004, month=4, day=17), b'"2004-04-17T00:00:00"\n'),
         (CustomObject(), b'[\n  "lovely spam!"\n]\n'),
+        (CustomDataclass(), b'[\n  "wonderful spam!"\n]\n'),
         (["list\nwith\nnewlines"], b'[\n  "list\\nwith\\nnewlines"\n]\n'),
     ],
 )
@@ -72,6 +83,7 @@ def test_json_encoding_custom_builtin_encoder(message, expected):
         ([123, "spam", {"a": 42}],),
         (datetime.datetime(year=2004, month=4, day=17),),
         (CustomObject(),),
+        (CustomDataclass(),),
         (["list\nwith\nnewlines"],),
     ],
 )
