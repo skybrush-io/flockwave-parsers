@@ -2,6 +2,8 @@
 Flockwave application suite.
 """
 
+from typing import overload
+
 from .wrappers import append_separator, prefix_with_length
 from .types import Encoder, Wrapper, T
 
@@ -10,6 +12,18 @@ __all__ = ("create_encoder", "create_length_prefixed_encoder", "create_line_enco
 
 def _identity(x: bytes) -> bytes:
     return x
+
+
+@overload
+def create_encoder(
+    encoder: None = None, wrapper: Wrapper | None = None
+) -> Encoder[bytes]: ...
+
+
+@overload
+def create_encoder(
+    encoder: Encoder[T], wrapper: Wrapper | None = None
+) -> Encoder[T]: ...
 
 
 def create_encoder(
@@ -30,11 +44,15 @@ def create_encoder(
             possible to separate the individual messages later on the receiving
             end unambiguously
     """
-    encoder = encoder or _identity
-    if wrapper:
-        return lambda message: wrapper(encoder(message))  # type: ignore
+    if encoder:
+        if wrapper:
+            return lambda message: wrapper(encoder(message))
+        else:
+            return encoder
+    elif wrapper:
+        return wrapper  # type: ignore[return-value]
     else:
-        return encoder
+        return _identity  # type: ignore[return-value]
 
 
 def create_length_prefixed_encoder(
