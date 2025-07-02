@@ -2,7 +2,7 @@
 Flockwave application suite.
 """
 
-from typing import Callable
+from typing import Callable, overload
 
 from .filters import reject_shorter_than
 from .splitters import dummy_splitter, split_lines, split_using_length_prefix
@@ -16,10 +16,32 @@ __all__ = (
 )
 
 
+@overload
 def create_parser_generator(
     *,
-    splitter: Splitter | None = None,
+    decoder: None = None,
+    splitter: Splitter | Callable[[], Splitter] | None = None,
+    pre_filter: Filter[bytes] | None = None,
+    post_filter: Filter[bytes] | None = None,
+    filter: Filter[bytes] | None = None,
+) -> ParserGenerator[bytes]: ...
+
+
+@overload
+def create_parser_generator(
+    *,
+    decoder: Callable[[bytes], T],
+    splitter: Splitter | Callable[[], Splitter] | None = None,
+    pre_filter: Filter[bytes] | None = None,
+    post_filter: Filter[T] | None = None,
+    filter: Filter[T] | None = None,
+) -> ParserGenerator[T]: ...
+
+
+def create_parser_generator(
+    *,
     decoder: Callable[[bytes], T] | None = None,
+    splitter: Splitter | Callable[[], Splitter] | None = None,
     pre_filter: Filter[bytes] | None = None,
     post_filter: Filter[T] | None = None,
     filter: Filter[T] | None = None,
@@ -53,28 +75,27 @@ def create_parser_generator(
     post_filter = post_filter or filter
 
     if splitter is None:
-        splitter = dummy_splitter()
+        splitter_gen = dummy_splitter()
+    elif callable(splitter):
+        # Syntactic sugar: allow the user to pass in a function that returns
+        # a generator when called with no arguments
+        splitter_gen = splitter()
+    else:
+        splitter_gen = splitter
 
-    # Syntactic sugar: allow the user to pass in a function that returns
-    # a generator when called with no arguments
-    if callable(splitter):
-        splitter = splitter()
-
-    assert splitter is not None
-
-    next(splitter)  # prime the generator
+    next(splitter_gen)  # prime the generator
     data = yield ()
 
     while True:
         messages = []
 
-        for chunk in splitter.send(data):
+        for chunk in splitter_gen.send(data):
             if pre_filter and not pre_filter(chunk):
                 continue
 
             message = decoder(chunk) if decoder else chunk
 
-            if post_filter and not post_filter(message):
+            if post_filter and not post_filter(message):  # type: ignore
                 continue
 
             messages.append(message)
